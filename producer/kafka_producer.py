@@ -10,12 +10,15 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from kafka import KafkaProducer
 from data_generator.simulator import generate_heartbeat
 from config.kafka_config import KAFKA_BOOTSTRAP_SERVERS, TOPIC_NAME
+from config.logger_config import setup_logger
 from tenacity import retry, wait_fixed, stop_after_attempt
+
+logger = setup_logger("KafkaProducer", "logs/heartbeat.log")
 
 @retry(
     stop=stop_after_attempt(10),
     wait=wait_fixed(5),
-    before_sleep=lambda retry_state: print(f"Kafka Producer: Retrying connection to broker (attempt {retry_state.attempt_number})...", flush=True)
+    before_sleep=lambda retry_state: logger.warning(f"Kafka Producer: Retrying connection to broker (attempt {retry_state.attempt_number})...")
 )
 def get_producer():
     return KafkaProducer(
@@ -31,17 +34,17 @@ def start_producer(interval=1.0):
     """Reads from simulator, sends to Kafka topic."""
     try:
         producer = get_producer()
-        print(f"Producer started. Sending data to {TOPIC_NAME} every {interval}s...", flush=True)
+        logger.info(f"Producer started. Sending data to {TOPIC_NAME} every {interval}s...")
         
         while True:
             data = generate_heartbeat()
             producer.send(TOPIC_NAME, data)
-            print(f"Sent: {data}", flush=True)
+            logger.info(f"Sent: {data}")
             time.sleep(interval)
             
     except Exception as e:
-        print(f"Error in producer: {e}", flush=True)
-        print("Make sure Kafka is running (docker-compose up -d)", flush=True)
+        logger.error(f"Error in producer: {e}")
+        logger.info("Make sure Kafka is running (docker-compose up -d)")
 
 if __name__ == "__main__":
     start_producer()

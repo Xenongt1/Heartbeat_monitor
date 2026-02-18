@@ -10,11 +10,14 @@ from kafka import KafkaConsumer
 from consumer.validator import validate_heartbeat
 from database.db_handler import insert_heartbeat
 from config.kafka_config import KAFKA_BOOTSTRAP_SERVERS, TOPIC_NAME
+from config.logger_config import setup_logger
 from tenacity import retry, wait_fixed, stop_after_delay
+
+logger = setup_logger("KafkaConsumer", "logs/heartbeat.log")
 
 @retry(
     wait=wait_fixed(5),
-    retry_error_callback=lambda retry_state: print(f"Consumer: Still waiting for Kafka/DB (attempt {retry_state.attempt_number})...", flush=True)
+    retry_error_callback=lambda retry_state: logger.warning(f"Consumer: Still waiting for Kafka/DB (attempt {retry_state.attempt_number})...")
 )
 def get_consumer():
     return KafkaConsumer(
@@ -32,7 +35,7 @@ def start_consumer():
     """Listens to Kafka topic, validates data and stores in DB."""
     try:
         consumer = get_consumer()
-        print(f"Consumer started. Listening on {TOPIC_NAME}...", flush=True)
+        logger.info(f"Consumer started. Listening on {TOPIC_NAME}...")
         
         for message in consumer:
             data = message.value
@@ -43,11 +46,11 @@ def start_consumer():
             # Store in database
             insert_heartbeat(data)
             
-            print(f"Processed: {data['customer_id']} | Rate: {data['heart_rate']} | Status: {data['status']}", flush=True)
+            logger.info(f"Processed: {data['customer_id']} | Rate: {data['heart_rate']} | Status: {data['status']}")
             
     except Exception as e:
-        print(f"Error in consumer: {e}", flush=True)
-        print("Make sure Kafka and PostgreSQL are running.", flush=True)
+        logger.error(f"Error in consumer: {e}")
+        logger.info("Make sure Kafka and PostgreSQL are running.")
 
 if __name__ == "__main__":
     start_consumer()

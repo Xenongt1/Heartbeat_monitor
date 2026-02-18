@@ -10,6 +10,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from producer.kafka_producer import start_producer
 from consumer.kafka_consumer import start_consumer
 from database.db_handler import init_db
+from config.logger_config import setup_logger
+
+logger = setup_logger("PipelineRunner", "logs/heartbeat.log")
 
 def run_pipeline():
     """Orchestrates producer + consumer together using multiprocessing."""
@@ -21,7 +24,7 @@ def run_pipeline():
     producer_process = multiprocessing.Process(target=start_producer, args=(2.0,)) # Send every 2 seconds
     consumer_process = multiprocessing.Process(target=start_consumer)
     
-    print("Starting Pipeline... (Ctrl+C to stop)", flush=True)
+    logger.info("Starting Pipeline... (Ctrl+C to stop)")
     
     try:
         # Start processes
@@ -35,10 +38,10 @@ def run_pipeline():
             time.sleep(1)
             
     except KeyboardInterrupt:
-        print("\nShutting down pipeline...", flush=True)
+        logger.info("Shutting down pipeline...")
         producer_process.terminate()
         consumer_process.terminate()
-        print("Pipeline stopped.", flush=True)
+        logger.info("Pipeline stopped.")
 
 if __name__ == "__main__":
     run_pipeline()
