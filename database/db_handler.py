@@ -7,14 +7,22 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config.db_config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 
+@retry(
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=1, min=2, max=10),
+    retry=retry_if_exception_type(psycopg2.OperationalError),
+    before_sleep=lambda retry_state: print(f"Retrying database connection (attempt {retry_state.attempt_number})...", flush=True)
+)
 def get_connection():
     return psycopg2.connect(
         host=DB_HOST,
         port=DB_PORT,
         database=DB_NAME,
         user=DB_USER,
-        password=DB_PASSWORD
+        password=DB_PASSWORD,
+        connect_timeout=5
     )
 
 def init_db():

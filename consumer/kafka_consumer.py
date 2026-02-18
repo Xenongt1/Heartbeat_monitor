@@ -10,19 +10,28 @@ from kafka import KafkaConsumer
 from consumer.validator import validate_heartbeat
 from database.db_handler import insert_heartbeat
 from config.kafka_config import KAFKA_BOOTSTRAP_SERVERS, TOPIC_NAME
+from tenacity import retry, wait_fixed, stop_after_delay
+
+@retry(
+    wait=wait_fixed(5),
+    retry_error_callback=lambda retry_state: print(f"Consumer: Still waiting for Kafka/DB (attempt {retry_state.attempt_number})...", flush=True)
+)
+def get_consumer():
+    return KafkaConsumer(
+        TOPIC_NAME,
+        bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+        auto_offset_reset='earliest',
+        enable_auto_commit=True,
+        group_id='heartbeat_group',
+        value_deserializer=lambda x: json.loads(x.decode('utf-8')),
+        session_timeout_ms=10000,
+        heartbeat_interval_ms=3000
+    )
 
 def start_consumer():
     """Listens to Kafka topic, validates data and stores in DB."""
     try:
-        consumer = KafkaConsumer(
-            TOPIC_NAME,
-            bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
-            auto_offset_reset='earliest',
-            enable_auto_commit=True,
-            group_id='heartbeat_group',
-            value_deserializer=lambda x: json.loads(x.decode('utf-8'))
-        )
-        
+        consumer = get_consumer()
         print(f"Consumer started. Listening on {TOPIC_NAME}...", flush=True)
         
         for message in consumer:
