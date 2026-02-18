@@ -1,4 +1,4 @@
-# Database schema
+-- Database schema
 CREATE TABLE IF NOT EXISTS heartbeat_logs (
     id SERIAL PRIMARY KEY,
     customer_id VARCHAR(50),
