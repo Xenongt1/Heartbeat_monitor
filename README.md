@@ -1,10 +1,14 @@
-# 💓 Heartbeat Monitor: Real-Time Health Streaming Pipeline
+# Heartbeat Monitor: Real-Time Health Streaming Pipeline
 
 A robust, enterprise-grade data engineering pipeline designed to monitor customer heartbeat data in real-time. This project leverages **Kafka** for distributed streaming, **PostgreSQL** for persistent storage, and **Streamlit** for live visualization.
 
+<<<<<<< HEAD
 ![Dashboard Preview](docs/images/dashboard_screenshot.png)
 
 ## 🏗️ Architecture Overview
+=======
+## Architecture Overview
+>>>>>>> 0fba4929f4fd72c7fdd479f2be18196e04d65ff6
 
 The system follows a microservices-based streaming architecture:
 
@@ -23,6 +27,7 @@ graph LR
     end
 ```
 
+<<<<<<< HEAD
 ### Data Flow
 1.  **Simulation**: The `simulator` generates synthetic heartbeat events (JSON) with realistic variability and random anomalies.
 2.  **Ingestion**: The **Kafka Producer** pushes these events to the `heartbeat_data` topic.
@@ -35,6 +40,9 @@ graph LR
 6.  **Visualization**: The **Streamlit Dashboard** queries the DB every second to update live charts and metrics.
 
 ## 🚀 Key Features
+=======
+## Key Features
+>>>>>>> 0fba4929f4fd72c7fdd479f2be18196e04d65ff6
 
 *   **Real-time Streaming**: Continuous data ingestion using high-throughput Kafka topics.
 *   **Intelligent Validation**: Automatic detection of health anomalies.
@@ -43,7 +51,7 @@ graph LR
 *   **Centralized Logging**: Structured, rotating file logging in the `logs/` directory.
 *   **Live Visual Insights**: Interactive dashboard with trend lines and pie charts.
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 *   **Language**: Python 3.10+
 *   **Message Broker**: Apache Kafka (Confluent 7.4.0)
@@ -52,7 +60,7 @@ graph LR
 *   **Infrastructure**: Docker & Docker Compose
 *   **Testing**: Unittest
 
-## 📁 Project Structure
+## Project Structure
 
 *   `config/`: Centralized settings and logging utilities.
 *   `data_generator/`: Heartbeat simulation logic.
@@ -67,7 +75,7 @@ graph LR
 
 ---
 
-## 🚦 Quick Start
+## Quick Start
 
 For detailed step-by-step instructions, please refer to the **[Detailed Setup Guide](docs/setup_guide.md)**.
 
