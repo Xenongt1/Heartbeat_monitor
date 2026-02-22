@@ -5,7 +5,7 @@ A robust, enterprise-grade data engineering pipeline designed to monitor custome
 <<<<<<< HEAD
 ![Dashboard Preview](docs/images/dashboard_screenshot.png)
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 =======
 ## Architecture Overview
 >>>>>>> 0fba4929f4fd72c7fdd479f2be18196e04d65ff6
@@ -39,7 +39,7 @@ graph LR
 5.  **Storage**: Validated data is inserted into a **PostgreSQL** database.
 6.  **Visualization**: The **Streamlit Dashboard** queries the DB every second to update live charts and metrics.
 
-## 🚀 Key Features
+## Key Features
 =======
 ## Key Features
 >>>>>>> 0fba4929f4fd72c7fdd479f2be18196e04d65ff6
@@ -85,7 +85,7 @@ For detailed step-by-step instructions, please refer to the **[Detailed Setup Gu
 3.  **Run Pipeline**: `python pipeline/pipeline_runner.py`
 4.  **View Dashboard**: `streamlit run dashboard/app.py`
 
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 - **NoBrokersAvailable**: Ensure Docker is running. If on Windows, check `.env` uses `127.0.0.1`.
 - **DB Auth Error**: If you changed passwords, run `docker-compose down -v` to reset the volume.
